@@ -4,6 +4,7 @@ import shyurer
 import json
 import time
 import requests
+import ssl
 from websocket import create_connection
 from dotenv import load_dotenv
 
@@ -35,7 +36,11 @@ discriminator = userinfo["discriminator"]
 userid = userinfo["id"]
 
 def joiner(token, status, custom_status=""):
-    ws = create_connection('wss://gateway.discord.gg/?v=9&encoding=json')
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+    
+    ws = create_connection('wss://gateway.discord.gg/?v=9&encoding=json', sslopt={"cert_reqs": ssl.CERT_NONE})
     start = json.loads(ws.recv())
     heartbeat = start['d']['heartbeat_interval']
     
